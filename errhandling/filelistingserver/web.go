@@ -15,14 +15,28 @@ func errWrapper(handler appHandler) func(writer http.ResponseWriter, request *ht
 	logger, _ := zap.NewProduction()
 
 	return func(writer http.ResponseWriter, request *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.Sugar().Warnf("panic: %v", r)
+				http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+
 		err := handler(writer, request)
 		if err != nil {
 			logger.Sugar().Warnf("Error Handling request: %s", err.Error())
+
+			if userError, ok := err.(userError); ok {
+				http.Error(writer, userError.Message(), http.StatusBadRequest)
+				return
+			}
 
 			code := http.StatusOK
 			switch {
 			case os.IsNotExist(err):
 				code = http.StatusNotFound
+			case os.IsPermission(err):
+				code = http.StatusForbidden
 			default:
 				code = http.StatusInternalServerError
 			}
@@ -32,8 +46,13 @@ func errWrapper(handler appHandler) func(writer http.ResponseWriter, request *ht
 	}
 }
 
+type userError interface {
+	error
+	Message() string
+}
+
 func main() {
-	http.HandleFunc("/list/", errWrapper(filelisting.Handler))
+	http.HandleFunc("/", errWrapper(filelisting.Handler))
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
