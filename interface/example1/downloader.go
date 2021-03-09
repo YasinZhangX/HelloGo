@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"yasinzhang.top/hellogo/interface/infra"
+	"yasinzhang.top/hellogo/interface/example1/infra"
 )
 
 func getRetriver() retriver {

@@ -5,17 +5,24 @@ import (
 	"unicode/utf8"
 )
 
+var lastOccured = make([]int, 0xffff)
+
 func solution(s string) string {
 	if len(s) == 0 {
 		return ""
 	}
 
-	dict := make(map[rune]int)
+	// lastOccured := make(map[rune]int)
+	// lastOccured := make([]int, 0xffff)
+	for i := range lastOccured {
+		lastOccured[i] = -1
+	}
+
 	start := 0
 	var maxLength, left, right int
 	for i, ch := range []rune(s) {
-		if index, isExist := dict[ch]; isExist && index >= start {
-			start = dict[ch] + 1
+		if index := lastOccured[ch]; index != -1 && index >= start {
+			start = lastOccured[ch] + 1
 		}
 
 		if i-start+1 > maxLength {
@@ -24,7 +31,7 @@ func solution(s string) string {
 			maxLength = i - start + 1
 		}
 
-		dict[ch] = i
+		lastOccured[ch] = i
 	}
 
 	return string([]rune(s)[left : right+1])
