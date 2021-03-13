@@ -15,7 +15,7 @@ func CreateNode(value int) *Node {
 
 // Print print node value
 func (node Node) Print() {
-	fmt.Println(node)
+	fmt.Println(node.Value)
 }
 
 // SetValue set node value
