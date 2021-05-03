@@ -9,6 +9,7 @@ ARG INSTALL_NODE="true"
 ARG NODE_VERSION="lts/*"
 RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
+RUN echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.bashrc
 RUN echo "export GO111MODULE=on" >> ~/.bashrc
 RUN echo "export GOPROXY=https://goproxy.io,direct" >> ~/.bashrc
 
