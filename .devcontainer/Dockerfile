@@ -12,12 +12,7 @@ ARG INSTALL_NODE="true"
 ARG NODE_VERSION="lts/*"
 RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-RUN echo "export PATH=/usr/local/go/bin:$PATH" >> ~/.bashrc
-# RUN echo "export GO111MODULE=on" >> ~/.bashrc
-# RUN echo "export GOPROXY=https://goproxy.io,direct" >> ~/.bashrc
-
-# RUN echo "export GO111MODULE=on" >> /home/vscode/.bashrc
-# RUN echo "export GOPROXY=https://goproxy.io,direct" >> /home/vscode/.bashrc
+RUN apt-get update && apt-get install -y cgroup-bin tree stress
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
